@@ -1,0 +1,322 @@
+ -- made by zhy9 (only the intro)
+-- reselling or leaking is not premitted
+-- vars
+local Players = game:GetService("Players") -- the player var
+local TweenService = game:GetService("TweenService") -- the animation
+local Lighting = game:GetService("Lighting") -- for the blur effect
+-- player vars
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+--  add the blur
+local blur = Instance.new("BlurEffect")
+blur.Size = 24
+blur.Name = "IntroBlur"
+blur.Parent = Lighting
+
+-- setup
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "IntroGui"
+screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+-- creation of the logo
+local imageLabel = Instance.new("ImageLabel")
+imageLabel.Size = UDim2.new(0, 200, 0, 200)
+imageLabel.Position = UDim2.new(0.5, -100, 0.5, -100)
+imageLabel.BackgroundTransparency = 1
+imageLabel.ImageTransparency = 1
+imageLabel.Image = "rbxassetid://84552134719867" -- put your own image here must be a decal and visible too everyone
+imageLabel.Parent = screenGui
+
+-- load button
+local loadButton = Instance.new("TextButton")
+loadButton.Size = UDim2.new(0, 120, 0, 40)
+loadButton.Position = UDim2.new(0.5, -130, 0.8, 0)
+loadButton.BackgroundColor3 = Color3.fromRGB(60, 180, 75)
+loadButton.TextColor3 = Color3.new(1, 1, 1)
+loadButton.Text = "Load"
+loadButton.Font = Enum.Font.GothamBold
+loadButton.TextSize = 20
+loadButton.Parent = screenGui
+
+-- Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 120, 0, 40)
+closeButton.Position = UDim2.new(0.5, 10, 0.8, 0)
+closeButton.BackgroundColor3 = Color3.fromRGB(220, 50, 47)
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.Text = "Close"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 20
+closeButton.Parent = screenGui
+
+-- fade in
+local fadeIn = TweenService:Create(imageLabel, TweenInfo.new(1), {ImageTransparency = 0.2})
+fadeIn:Play()
+
+-- Function to smoothly load
+local function loaded()
+	loadButton.Visible = false
+	closeButton.Visible = false
+
+	local slideTween = TweenService:Create(imageLabel, TweenInfo.new(1.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {
+		Position = UDim2.new(1, -110, 0, 10),
+		Size = UDim2.new(0, 100, 0, 100)
+	})
+	slideTween:Play()
+
+	local blurFade = TweenService:Create(blur, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = 0
+	})
+	blurFade:Play()
+
+	blurFade.Completed:Wait()
+	blur:Destroy()
+	-- [[ Services ]] --
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInput = game:GetService("UserInputService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CoreGui = game:GetService("CoreGui")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local MainEvent = ReplicatedStorage:WaitForChild("MainEvent")
+
+-- [[ Config ]] --
+local ForceHit = {
+    Enabled = false,
+    HitPart = "Head",
+    FOVRadius = 400
+}
+
+-- [[ UI ]] --
+local sigmaGui = Instance.new("ScreenGui")
+local ImageButton = Instance.new("ImageButton")
+local UiCorner = Instance.new("UICorner")
+
+sigmaGui.Name = "sigmaGui"
+sigmaGui.Parent = CoreGui
+sigmaGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+sigmaGui.ResetOnSpawn = false
+
+ImageButton.Name = "ImageButton"
+ImageButton.Parent = sigmaGui
+ImageButton.Active = true
+ImageButton.Draggable = true
+ImageButton.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+ImageButton.BackgroundTransparency = 0.35
+ImageButton.Size = UDim2.new(0, 90, 0, 90)
+ImageButton.Position = UDim2.new(0.5, -45, 0.5, -45)
+ImageButton.Image = "rbxassetid://84552134719867"
+
+UiCorner.CornerRadius = UDim.new(0.2, 0)
+UiCorner.Parent = ImageButton
+
+-- [[ Highlight ]] --
+local Highlight = Instance.new("Highlight")
+Highlight.FillColor = Color3.fromRGB(255, 255, 255)
+Highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+Highlight.FillTransparency = 0.5
+Highlight.OutlineTransparency = 0
+Highlight.Enabled = false
+Highlight.Parent = CoreGui
+
+-- [[ Target Lock State ]] --
+local LockedTarget = nil
+local CachedClosestPlayer = nil
+
+-- [[ Find Closest Player ]] --
+local function GetClosestPlayer()
+    local MousePos = UserInput:GetMouseLocation()
+    local ClosestDist, ClosestPart, ClosestChar = math.huge, nil, nil
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(ForceHit.HitPart) then
+            local part = player.Character[ForceHit.HitPart]
+            local screenPos, onScreen = Camera:WorldToScreenPoint(part.Position)
+            if onScreen then
+                local dist = (Vector2.new(screenPos.X, screenPos.Y) - MousePos).Magnitude
+                if dist < ClosestDist and dist <= ForceHit.FOVRadius then
+                    ClosestDist = dist
+                    ClosestPart = part
+                    ClosestChar = player.Character
+                end
+            end
+        end
+    end
+
+    return ClosestPart, ClosestChar
+end
+
+-- [[ GUI Button Click ]] --
+ImageButton.MouseButton1Click:Connect(function()
+    ForceHit.Enabled = not ForceHit.Enabled
+
+    if ForceHit.Enabled then
+        local targetPart, targetChar = GetClosestPlayer()
+        if targetChar then
+            LockedTarget = targetChar
+            CachedClosestPlayer = targetPart
+            ImageButton.Image = "rbxassetid://110349736776719"
+            Highlight.Adornee = LockedTarget
+            Highlight.Enabled = true
+        else
+            ForceHit.Enabled = false
+            LockedTarget = nil
+            CachedClosestPlayer = nil
+        end
+    else
+        ImageButton.Image = "rbxassetid://133161299056338"
+        LockedTarget = nil
+        CachedClosestPlayer = nil
+        Highlight.Enabled = false
+    end
+end)
+
+-- [[ Render Loop ]] --
+RunService.RenderStepped:Connect(function()
+    if ForceHit.Enabled and LockedTarget and LockedTarget:FindFirstChild(ForceHit.HitPart) then
+        local head = LockedTarget[ForceHit.HitPart]
+        CachedClosestPlayer = head
+        Camera.CFrame = CFrame.new(Camera.CFrame.Position, head.Position)
+    end
+end)
+
+-- [[ Auto Shoot - Instant ]] --
+RunService.Heartbeat:Connect(function()
+    if ForceHit.Enabled and LockedTarget and LockedTarget:FindFirstChild(ForceHit.HitPart) then
+        -- Don't shoot if they have a ForceField
+        if LockedTarget:FindFirstChildOfClass("ForceField") then return end
+
+        local AimPart = LockedTarget[ForceHit.HitPart]
+
+        -- Execute the shoot action immediately
+        ReplicatedStorage.MainFunction:InvokeServer("GunCheck")
+
+        local args = {
+            "Shoot",
+            {
+                {
+                    [1] = {
+                        ["Instance"] = AimPart,
+                        ["Normal"] = Vector3.new(0.99, 0.1, -0.02),
+                        ["Position"] = AimPart.Position
+                    },
+                    [2] = {
+                        ["Instance"] = AimPart,
+                        ["Normal"] = Vector3.new(0.99, 0.1, -0.02),
+                        ["Position"] = AimPart.Position
+                    },
+                    [3] = {
+                        ["Instance"] = AimPart,
+                        ["Normal"] = Vector3.new(0.99, 0.1, -0.02),
+                        ["Position"] = AimPart.Position
+                    },
+                    [4] = {
+                        ["Instance"] = AimPart,
+                        ["Normal"] = Vector3.new(0.99, 0.1, -0.02),
+                        ["Position"] = AimPart.Position
+                    },
+                    [5] = {
+                        ["Instance"] = AimPart,
+                        ["Normal"] = Vector3.new(0.99, 0.1, -0.02),
+                        ["Position"] = AimPart.Position
+                    }
+                },
+                {
+                    [1] = {["thePart"] = AimPart, ["theOffset"] = CFrame.new(0, 0, 0)},
+                    [2] = {["thePart"] = AimPart, ["theOffset"] = CFrame.new(0, 0, 0)},
+                    [3] = {["thePart"] = AimPart, ["theOffset"] = CFrame.new(0, 0, 0)},
+                    [4] = {["thePart"] = AimPart, ["theOffset"] = CFrame.new(0, 0, 0)},
+                    [5] = {["thePart"] = AimPart, ["theOffset"] = CFrame.new(0, 0, 0)}
+                },
+                LocalPlayer.Character.Head.Position,
+                LocalPlayer.Character.Head.Position,
+                workspace:GetServerTimeNow()
+            }
+        }
+
+        MainEvent:FireServer(unpack(args))
+    end
+end)
+
+-- [[ Hook ForceHit ]] --
+local mt = getrawmetatable(game)
+local oldNamecall = mt.__namecall
+setreadonly(mt, false)
+
+mt.__namecall = newcclosure(function(self, ...)
+    local args = { ... }
+    local method = getnamecallmethod()
+
+    if ForceHit.Enabled and method == "FireServer" and self == MainEvent and args[1] == "Shoot" then
+        local target = CachedClosestPlayer
+        if target then
+            for _, shot in pairs(args[2][1]) do
+                shot["Instance"] = target
+            end
+            for _, data in pairs(args[2][2]) do
+                data["thePart"] = target
+                data["theOffset"] = CFrame.new()
+            end
+        end
+        return oldNamecall(self, unpack(args))
+    end
+
+    return oldNamecall(self, ...)
+end)
+
+print("kaias/tqurr9 was here dont skid") 
+if game.PlaceId == 9825515356 then
+
+    local a = game:GetService("ReplicatedStorage"):WaitForChild("MainEvent")
+    local b = {"IS_MOBILE"}
+    local c
+    if a and a:IsA("RemoteEvent") then
+        c = hookmetamethod(game, "__namecall", function(self, ...)
+            local method = getnamecallmethod()
+            local args = {...}
+            if method == "FireServer" and self == a and table.find(b, args[1]) then
+                return
+            end
+            return c(self, ...)
+        end)
+    end
+end
+
+for Key, Object in pairs(getgc(true)) do
+    if type(Object) == "table" then
+        setreadonly(Object, false)
+        local indexInstance = rawget(Object, "indexInstance")
+        if type(indexInstance) == "table" and indexInstance[1] == "kick" then
+            setreadonly(indexInstance, false)
+            rawset(Object, "Table", {"kick", function() coroutine.yield() end})
+        break
+       end
+    end
+end
+end
+
+-- func that runs when you press close
+local function closed()
+	loadButton.Visible = false
+	closeButton.Visible = false
+
+	local logoFadeOut = TweenService:Create(imageLabel, TweenInfo.new(1), {ImageTransparency = 1})
+	logoFadeOut:Play()
+
+	local blurFade = TweenService:Create(blur, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
+		Size = 0
+	})
+	blurFade:Play()
+
+	blurFade.Completed:Wait()
+	blur:Destroy()
+	screenGui:Destroy()
+end
+
+-- buttons 
+loadButton.MouseButton1Click:Connect(loaded)
+closeButton.MouseButton1Click:Connect(closed)
