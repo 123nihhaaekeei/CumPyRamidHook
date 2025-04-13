@@ -95,7 +95,7 @@ Script = {
 }
 
 Script.Drawing.intro = Drawing.new("Text")
-Script.Drawing.intro.Text = "Index Is Loading.."
+Script.Drawing.intro.Text = "Codex Is Loading.."
 Script.Drawing.intro.Size = 20
 Script.Drawing.intro.Color = Color3.new(1.000000, 1.000000, 1.000000)
 Script.Drawing.intro.Outline = true
@@ -152,7 +152,7 @@ local variable = true
 if getgenv().JairoUGHH == true then
     if variable == true then
         game:GetService("StarterGui"):SetCore("SendNotification", {
-            Title = "Index",
+            Title = "Codex",
             Text = "Updated",
             Duration = 0.01
         })
@@ -216,7 +216,7 @@ if Script.Table.Start.IntroBlur.Active then
         imageLabel.Parent = frame
         imageLabel.Size = UDim2.new(0.01, 0, 0.01, 0)  
         imageLabel.Position = UDim2.new(0.5, -0.1, 0.5, -0.1) 
-        imageLabel.Image = "rbxassetid://106428636831184"
+        imageLabel.Image = "rbxassetid://118140879441362"
         imageLabel.BackgroundTransparency = 1
         imageLabel.ImageTransparency = 100
         imageLabel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -224,7 +224,7 @@ if Script.Table.Start.IntroBlur.Active then
         local sound = Instance.new("Sound")
         sound.Name = "IntroSound"
         sound.Parent = frame
-        sound.SoundId = "rbxassetid://6580172940"
+        sound.SoundId = "rbxassetid://135244931019582"
         sound.Volume = 50
         sound:Play()
 
@@ -528,8 +528,8 @@ Script.Connections.InputBeganConnection = UserInputService.InputBegan:Connect(fu
             if Script.Target then
                 if getgenv().Index.Start.AimBot.Notification then
                     game:GetService("StarterGui"):SetCore("SendNotification", {
-                        Title = "INDEX",
-                        Text = "opps: " .. Script.Target.DisplayName,
+                        Title = "Codex",
+                        Text = "Osamason: " .. Script.Target.DisplayName,
                         Duration = 0.001,
                     })
                 end
